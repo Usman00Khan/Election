@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Election Portal</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body >
+    <div class="container" style="width: 650px; float: left; padding: 1em; margin-left: 100px;">
+      <div class="row">
+        <div class="col-lg-12">
+          <h1 class="text-center">Voting Portal</h1>
+          <hr/>
+          <br/>
+          <div id="loader">
+            <p class="text-center">Loading...</p>
+          </div>
+          <div id="content" style="display: none;">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Votes</th>
+                </tr>
+              </thead>
+              <tbody id="candidatesResults">
+              </tbody>
+            </table>
+            <hr/>
+
+            <div id="VoteCandidatesDiv" style="display: none;">
+                <form onSubmit="App.castVote()" id="voteCandidateForm">
+                <div class="form-group">
+                  <label for="candidatesSelect">Select Candidate</label>
+                  <select class="form-control" id="candidatesSelect">
+                  </select>
+                </div>
+                <button type="button" class="btn btn-primary" onclick="App.castVote();">Vote</button>
+                <hr />
+              </form>
+            </div>
+
+            
+            
+  <div id="addCandidatesDiv" >
+       <form onSubmit="App.addCandidates();">
+        <input type="text" id = "candidateName"/>
+        <button type="submit" class="btn btn-primary">Add Candidates</button>
+      </form>
+  </div>
+  <br>
+  <br>
+  <br>
+  <div id="StartTiming">
+      <form>
+        <!-- Time : <select id="start_hours"></select>hours &nbsp <select id="start_minutes"></select>mins.<br/><br/>-->
+        End Time: <select id="end_hours"></select>hours &nbsp <select id="end_minutes"></select>mins.<br/><br/>
+        <input id="startvotebutton"  type="button" class="btn btn-primary" value="Start Vote" >
+      </form>
+  </div> 
+  
+  
+    <script>
+        var hours=24;
+        var minutes = 60,
+        select = document.getElementById("end_hours");
+        for (var i = 0; i<hours; i++)
+        {
+            var opt = document.createElement("option");
+            opt.value = i;
+            opt.innerHTML = i;
+            select.appendChild(opt);
+        }
+        select = document.getElementById("end_minutes");
+        for (var i = 0; i<minutes; i++)
+        {
+            var opt = document.createElement("option");
+            opt.value = i;
+            opt.innerHTML = i;
+            select.appendChild(opt);
+        }
+        document.getElementById('startvotebutton').onclick=function displayGone(){
+           document.getElementById('addCandidatesDiv').style.display="none";
+           document.getElementById('StartTiming').style.display="none";
+           document.getElementById('VoteCandidatesDiv').style.display="block";
+           App.startVoting();
+           App.setTimer();
+          
+           // abc(9,10);
+        }
+        var managerAddress="0x7aba4a306f65ed1269ec888d1cdf4a85c9b2652b";
+        console.log(managerAddress);
+        var Caccount;
+       web3.eth.getCoinbase(function(err, account) {
+        Caccount = account;
+        var prevaccount=account;
+        var accountInterval = setInterval(function() {
+           web3.eth.getCoinbase(function(err, account) {
+           if (prevaccount != account) {
+              AutoRefresh(100);
+              }
+                 prevaccount=account;
+                 });
+               }
+                 , 100);
+        if (managerAddress.localeCompare(Caccount)==0) {
+          document.getElementById('addCandidatesDiv').style.display="block";
+          document.getElementById('StartTiming').style.display="block";
+          document.getElementById('VoteCandidatesDiv').style.display="block";
+
+          
+       }else{
+          document.getElementById('addCandidatesDiv').style.display="none";
+          document.getElementById('StartTiming').style.display="none";
+          document.getElementById('VoteCandidatesDiv').style.display="block";
+       }
+       });
+
+
+        function AutoRefresh( t ) {
+               setTimeout("location.reload(true);", t);
+            }
+              
+        
+             
+          
+
+
+  
+
+       
+       
+       function abc(end_h, end_m){
+          var x = setInterval(function def() {
+            end_h = end_h.toString();
+            end_m = end_m.toString();
+
+          var a=new Date();
+          var b=a.toString();
+
+
+          var month=b.substring(4,7);
+          var date=b.substring(8,10)+",";
+          var year=b.substring(11,15);
+          
+          var end_s="00";
+          var countDownDate = new Date(month+" "+date+" "+year+" "+end_h+":"+end_m+":"+end_s).getTime(); 
+          var now = new Date().getTime();
+          
+          var distance = countDownDate - now;
+          var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+          var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+          var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+          document.getElementById("t1").innerHTML = days + "d " + hours + "h "+ minutes + "m " + seconds + "s ";
+          
+          if(distance<0) {
+            
+          document.getElementById("t1").innerHTML="EXPIRED";
+          document.getElementById('addCandidatesDiv').style.display="none";
+          document.getElementById('StartTiming').style.display="none";
+          document.getElementById('VoteCandidatesDiv').style.display="none";
+          document.getElementById('winnerDiv').style.display="block";
+           // App.getWinner();
+
+          }
+            },1000);
+          
+
+        }
+
+        
+        // window.onload=function(){
+        //     data();
+        // };
+
+
+         function data(){
+        var hour;
+        var min;
+
+        var electionIns;
+        App.contracts.Election.deployed().then(function(instance){
+        electionIns = instance;
+        instance.hour().then(function(i){
+         // global hour;
+         hour =i;
+          
+      })
+      App.contracts.Election.deployed().then(function(i){
+        i.min().then(function(i){
+          // global min;
+          min = i;
+          abc(hour,min);
+          
+        })
+      })
+    });
+    
+    
+  }
+
+    </script>
+            <p id="accountAddress" class="text-center"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="float: right;padding: 1em;margin-right: 200px;margin-top: 100px;">
+        <p style="font-size: 20px;font-weight: bold;">Time Left</p>
+        <p id="t1" style="font-size: 40px;font-family: Helvetica;"></p>
+        <form>
+            <input type="button" onclick="data()" class="btn btn-primary" value="show Time left">
+        </form>
+  </div>
+
+  <div id="winnerDiv" style="float:left; display: none; margin-top:300px;">
+    <p style="font-size: 20px; font-weight:bold; color: blue;  text-align: center">WINNER:</p>
+    <p id="winnerName" style="font-size: 25px; font-weight:bold; color: blue;  text-align: center"></p>
+    <button class="btn btn-primary" onclick = "App.getWinner();">get winner</button>
+  </div> 
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/web3.min.js"></script>
+    <script src="js/truffle-contract.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
