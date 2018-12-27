@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.0;
 /**
  * The Election contract does this and that...
  */
@@ -31,7 +31,7 @@ contract Election {
 
 	function addCandidate (bytes32 _name) public {
 
-		require (msg.sender == 0x7aba4a306f65ed1269ec888d1cdf4a85c9b2652b);
+		require (msg.sender == address(0x007aba4a306f65ed1269ec888d1cdf4a85c9b2652b));
 		require (!electionStarted);
 		require (isNewEntry(_name));
 		
@@ -60,12 +60,12 @@ contract Election {
 
   function startVote () public {
 
-  	require (msg.sender == 0x7aba4a306f65ed1269ec888d1cdf4a85c9b2652b);
+  	require (msg.sender == address(0x007aba4a306f65ed1269ec888d1cdf4a85c9b2652b));
   	electionStarted =true;
   }
 
   function setTimer (uint a , uint b) public {
-  	require (msg.sender == 0x7aba4a306f65ed1269ec888d1cdf4a85c9b2652b);
+  	require (msg.sender == address(0x007aba4a306f65ed1269ec888d1cdf4a85c9b2652b));
 
   	require (!electionStarted);
   	
@@ -76,7 +76,7 @@ contract Election {
   function gethighest () public returns(uint) {
 
   	require (candidatesCount>0);
-  	Candidate max=candidates[1];
+  	Candidate memory max=candidates[1];
   	for (uint i =2;i<=candidatesCount;i++){
   		if(candidates[i].voteCount>max.voteCount){
   			max =candidates[i];
