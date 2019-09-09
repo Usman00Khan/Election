@@ -9,17 +9,14 @@ contract Election {
 	struct Candidate {
 		uint id;
 		bytes32 name;
-		uint voteCount;	
+		uint voteCount;
 	}
 	bool public electionStarted;
-	
 	mapping (address => bool) public voters;
-
-	
 	mapping (uint => Candidate) public candidates;
 	uint public candidatesCount;
-	uint public hour;
-	uint public min;
+	string public time;
+	// uint public min;
 	constructor () public {
 		electionStarted = false;
 		/*candidateList = _candidateNames;
@@ -31,25 +28,22 @@ contract Election {
 
 	function addCandidate (bytes32 _name) public {
 
-		require (msg.sender == address(0x007aba4a306f65ed1269ec888d1cdf4a85c9b2652b));
-		require (!electionStarted);
-		require (isNewEntry(_name));
-		
+		require (msg.sender == address(0x0038b9D8EE6ba24c2D2a07cb8395478E93F086F9B5),
+		"Sender not authorised");
+		require (!electionStarted,"Election is going on");
+		require (isNewEntry(_name),"Already exists");
 		candidatesCount ++;
 		candidates[candidatesCount] = Candidate(candidatesCount,_name,0);
 	}
 	function vote (uint candidateId) public {
 
-		require (!voters[msg.sender]);
+		require (!voters[msg.sender],"Already voted");
 
-		require (candidateId>0&&candidateId<=candidatesCount);
-		
-		
+		require (candidateId>0&&candidateId<=candidatesCount,"Invalid candidate ID");
 		candidates[candidateId].voteCount++;
 		voters[msg.sender] = true;
 	}
-	
-	function isNewEntry(bytes32 candidate) view public returns (bool) {
+	function isNewEntry(bytes32 candidate) public view  returns (bool) {
     for(uint i = 1; i <= candidatesCount; i++) {
         if (candidates[i].name == candidate) {
             return false;
@@ -60,26 +54,24 @@ contract Election {
 
   function startVote () public {
 
-  	require (msg.sender == address(0x007aba4a306f65ed1269ec888d1cdf4a85c9b2652b));
-  	electionStarted =true;
+  	require (msg.sender == address(0x0038b9D8EE6ba24c2D2a07cb8395478E93F086F9B5),"Not authorized");
+	  electionStarted = true;
   }
 
-  function setTimer (uint a , uint b) public {
-  	require (msg.sender == address(0x007aba4a306f65ed1269ec888d1cdf4a85c9b2652b));
-
-  	require (!electionStarted);
-  	
-  	hour = a;
-  	min = b;
+  function setTimer (string memory a) public {
+  	require (msg.sender == address(0x0038b9D8EE6ba24c2D2a07cb8395478E93F086F9B5),"Not authorized");
+	  time = a;
   }
+  function getTimer () public view returns(string memory) {
+	  return time;
+  }
+  function gethighest () public view returns(uint) {
 
-  function gethighest () public returns(uint) {
-
-  	require (candidatesCount>0);
-  	Candidate memory max=candidates[1];
-  	for (uint i =2;i<=candidatesCount;i++){
+  	require (candidatesCount>0,"invalid candidate");
+	  Candidate memory max = candidates[1];
+  	for (uint i = 2;i<=candidatesCount;i++){
   		if(candidates[i].voteCount>max.voteCount){
-  			max =candidates[i];
+  			max = candidates[i];
   		}
   	}
   	return max.id;

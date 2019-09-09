@@ -145,6 +145,17 @@ App = {
     console.error(err);
   });
   },
+  getTimer: function(){
+   
+    App.contracts.Election.deployed().then(function(i){
+      return i.getTimer({from: App.account});
+    }).then(function(result){
+      console.log((result));
+
+  }).catch(function(err){
+    console.error(err);
+  });
+  },
   getWinner: function(){
       App.contracts.Election.deployed().then(function(instance) {
       electionInstance = instance;
