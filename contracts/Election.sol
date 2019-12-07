@@ -59,7 +59,7 @@ contract Election {
   }
 
   function setTimer (string memory a) public {
-  	require (msg.sender == address(0x0038b9D8EE6ba24c2D2a07cb8395478E93F086F9B5),"Not authorized");
+  	require (msg.sender == address(0x0038b9d8ee6ba24c2d2a07cb8395478e93f086f9b5),"Not authorized");
 	  time = a;
   }
   function getTimer () public view returns(string memory) {
